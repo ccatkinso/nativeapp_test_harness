@@ -1,60 +1,3 @@
-# TEST HARNESS DOCUMENTATION
-
-## Descriptions
-
-### Test Harness 1
-
-- SPCS App
-- Streamlit
-- Consumer data
-- SPCS Jupyter container
-- SPCS Service Container
-  - 1 x Service
-- 1 x function updates data  
-
-### TestHarness2
-
-Previous harness +
-SPCS job Container
-
-- 1 x SP runs job
-- 1 x SP executes function
-
-## TEST HARNESS 1 SETUP
-
-### Setup the service container image
-
-1. Docker Desktop SignIn
-2. in build/service_container run:
-
-    ```bash
-    cd build/service_container
-    docker build --platform=linux/amd64 -t python-jupyter-snowpark .
-    ```
-
-3. Test by running
-
-    ```bash
-    docker run -d -p8888:8888 python-jupyter-snowpark
-    ```
-
-    open a browser to: localhost:8888/lab
-
-### Setup Snowflake Account
-
-This will Create the following objects:
-
-- napspcs_service_role      (role)
-- napspcs_consumer_role     (role)
-- naspcs_wh                 (warehouse)
-- naspcs_db.napp            (schema)
-- naspcs_db.napp.specs      (stage)
-- naspcs_db.napp.images     (repository)
-- testharness               (application)
-
-1. Run the following:
-
-    ```sql
     -- Create NASPCS Role
     use role accountadmin;
     create role if not exists napspcs_service_role;
@@ -92,9 +35,11 @@ This will Create the following objects:
     create database if not exists naspcs_consumer_db;
     create schema if not exists naspcs_consumer_db.data;
     use schema naspcs_consumer_db.data;
-    create view if not exists orders as select * from snowflake_sample_data.tpch_sf10.orders;
+    create view if not exists naspcs_consumer_db.data.orders as select * from snowflake_sample_data.tpch_sf10.orders;
+
 
     -- display the URL for the image repo
     use role naspcs_role;
     show image repositories in schema naspcs_db.napp;
-    ```
+
+   

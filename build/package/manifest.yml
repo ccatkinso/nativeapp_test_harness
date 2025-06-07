@@ -1,0 +1,43 @@
+manifest_version: 1
+
+artifacts:
+  setup_script: application_setup.sql
+  default_streamlit: ui."Dashboard"
+  container_services:
+    images:
+      - /naspcs_db/napp/images/python-jupyter-snowpark:dev
+
+
+configuration:
+  log_level: INFO
+  trace_level: ON_EVENT
+
+privileges:
+    - CREATE DATABASE : 
+        description: "Create a database to host address data"
+    - CREATE COMPUTE POOL:
+        description: "Permission to create compute pools for batch enrichment processes"
+    - CREATE WAREHOUSE:
+        description : "Allow the creation of a warehouse to execute the jobs for enrichment process"
+
+
+references:
+  - target_table:
+      label: "Destination Table"
+      description: "Table which contains data we want to addess"
+      privileges:
+        - SELECT
+        - INSERT
+        - UPDATE
+        - REFERENCES
+      object_type: TABLE
+      multi_valued: false
+      register_callback: auto_config.register_single_callback
+  - source_view:
+      label: "Source Data view"
+      description: "a view which contains data we want to addess"
+      privileges:
+        - SELECT
+      object_type: VIEW
+      multi_valued: false
+      register_callback: auto_config.register_single_callback

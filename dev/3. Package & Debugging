@@ -1,0 +1,22 @@
+
+use role napspcs_service_role;
+create application package if not exists naspcs_pkg;
+
+drop application package if exists naspcs_pkg;
+
+CREATE APPLICATION PACKAGE naspcs_pkg;
+
+--grant install, develop on application package naspcs_pkg to role naspcs_consumer_role;
+
+-- create a debugging version and set debugging on
+CREATE APPLICATION naspcs_debug
+FROM APPLICATION PACKAGE naspcs_pkg 
+USING @naspcs_db.napp.specs;
+
+-- Upgrade the app while debugging
+   ALTER APPLICATION  naspcs_debug
+    UPGRADE USING @naspcs_db.napp.specs;
+    
+-- enable debugging on this application (provider only)
+ALTER application naspcs_debug SET debug_mode = True;
+
